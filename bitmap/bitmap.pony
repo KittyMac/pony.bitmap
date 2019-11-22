@@ -1,4 +1,9 @@
 
+use "path:/usr/lib" if osx
+use "lib:ponybitmap-osx" if osx
+use "lib:ponybitmap-ios" if ios
+
+
 use @memcpy[Pointer[None]](dst: Pointer[U8] tag, src: Pointer[U8] tag, n: USize)
 
 use @pony_bitmap_fillRect[None](s:Pointer[U8] tag, width:USize, height:USize, rX:USize, rY:USize, rW:USize, rH:USize, cR:U8, cG:U8, cB:U8, cA:U8)

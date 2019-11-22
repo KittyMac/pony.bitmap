@@ -4,6 +4,18 @@
 
 #define UNUSED(x) (void)(x)
 
+extern "C"
+{
+	void pony_bitmap_fillRect(uint32_t * s, size_t width, size_t height, size_t rX, size_t rY, size_t rW, size_t rH, uint8_t cR, uint8_t cG, uint8_t cB, uint8_t cA);
+	void pony_bitmap_blit(	uint32_t * d_ptr, size_t d_width, size_t d_height, 
+							uint32_t * s_ptr, size_t s_width, size_t s_height,
+							size_t d_x, size_t d_y,
+							size_t s_x, size_t s_y, size_t r_width, size_t r_height
+							);
+	void * pony_bitmap_row_pointers(char * ptr, size_t width, size_t height);
+	void pony_bitmap_row_pointers_free(char * ptr);
+}
+
 // a series of high-efficiency methods for bitmap manipulation, used by the
 // Pony Bitmap class
 
