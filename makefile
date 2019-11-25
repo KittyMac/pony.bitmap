@@ -24,10 +24,13 @@ shim-ios:
 	$(iphonesdk_clang) -arch armv7 -arch armv7s -arch arm64 -mios-version-min=10.0 -isysroot $(iphonesdk_isysroot) -c -o $(lib_dir)/libponybitmap-ios.a $(build_dir)/bitmap.o
 
 
-shim: shim-ios shim-native
+shim: check-folders shim-ios shim-native
 
-pony:
+pony: check-folders
 	stable env /Volumes/Development/Development/pony/ponyc/build/release/ponyc -p $(lib_dir) -o ./build/ ./bitmap
+
+check-folders:
+	-mkdir ./build
 
 clean:
 	rm ./build/*
