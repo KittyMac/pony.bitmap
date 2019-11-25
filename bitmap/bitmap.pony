@@ -6,11 +6,11 @@ use "lib:ponybitmap-ios" if ios
 
 use @memcpy[Pointer[None]](dst: Pointer[U8] tag, src: Pointer[U8] tag, n: USize)
 
-use @pony_bitmap_fillRect[None](s:Pointer[U8] tag, width:USize, height:USize, rX:USize, rY:USize, rW:USize, rH:USize, cR:U8, cG:U8, cB:U8, cA:U8)
+use @pony_bitmap_fillRect[None](s:Pointer[U8] tag, width:USize, height:USize, rX:I64, rY:I64, rW:USize, rH:USize, cR:U8, cG:U8, cB:U8, cA:U8)
 use @pony_bitmap_blit[None](	d_ptr:Pointer[U8] tag, d_width:USize, d_height:USize, 
 								s_ptr:Pointer[U8] tag, s_width:USize, s_height:USize,
-								d_x:USize, d_y:USize,
-								s_x:USize, s_y:USize, r_width:USize, r_height:USize)
+								d_x:I64, d_y:I64,
+								s_x:I64, s_y:I64, r_width:USize, r_height:USize)
 
 struct RGBA
 	var r:U8 = 0
@@ -32,12 +32,12 @@ struct RGBA
 	new yellow() => r = 255; g = 255; b = 0; a = 255
 
 struct Rect
-	var x:USize = 0
-	var y:USize = 0
+	var x:I64 = 0
+	var y:I64 = 0
 	var w:USize = 0
 	var h:USize = 0
 
-	new create(x':USize, y':USize, w':USize, h':USize) =>
+	new create(x':I64, y':I64, w':USize, h':USize) =>
 		x = x'
 		y = y'
 		w = w'
@@ -76,8 +76,8 @@ class val Bitmap
 	fun ref clear(c:RGBA box) =>
 		@pony_bitmap_fillRect[None](bytes.cpointer(0), width, height, 0, 0, width, height, c.r, c.g, c.b, c.a)
 	
-	fun ref getPixel(x: USize, y: USize):RGBA =>
-		let i = (y * width * 4) + (x * 4)
+	fun ref getPixel(x: I64, y: I64):RGBA =>
+		let i = ((y * width.i64() * 4) + (x * 4)).usize()
 		if (i >= 0) and (i <= ((width * height * 4) - 4)) then
 			try
 				return RGBA(
@@ -90,9 +90,9 @@ class val Bitmap
 		end
 		RGBA.clear()
 	
-	fun ref setPixel(x: USize, y: USize, c:RGBA box) =>
+	fun ref setPixel(x: I64, y: I64, c:RGBA box) =>
 		try
-			let i = (y * width * 4) + (x * 4)
+			let i = ((y * width.i64() * 4) + (x * 4)).usize()
 			if (i >= 0) and (i <= ((width * height * 4) - 4)) then
 				bytes(i + 0)? = c.r
 				bytes(i + 1)? = c.g
@@ -104,7 +104,7 @@ class val Bitmap
 	fun ref fillRect(r:Rect box, c:RGBA box) =>
 		@pony_bitmap_fillRect[None](bytes.cpointer(0), width, height, r.x, r.y, r.w, r.h, c.r, c.g, c.b, c.a)
 	
-	fun ref blit(x:USize, y:USize, o:Bitmap box) =>
+	fun ref blit(x:I64, y:I64, o:Bitmap box) =>
 		"""
 		blit the entire destination bitmap into the source bitmap at x,y
 		"""
@@ -113,7 +113,7 @@ class val Bitmap
 							x, y,
 							0, 0, o.width, o.height)
 	
-	fun ref blitPart(d_x:USize, d_y:USize, o:Bitmap box, s_x:USize, s_y:USize, s_width:USize, s_height:USize) =>
+	fun ref blitPart(d_x:I64, d_y:I64, o:Bitmap box, s_x:I64, s_y:I64, s_width:USize, s_height:USize) =>
 		"""
 		blit the a subrect of the destination bitmap into the source bitmap at x,y
 		"""

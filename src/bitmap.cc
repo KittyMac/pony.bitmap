@@ -6,11 +6,11 @@
 
 extern "C"
 {
-	void pony_bitmap_fillRect(uint32_t * s, size_t width, size_t height, size_t rX, size_t rY, size_t rW, size_t rH, uint8_t cR, uint8_t cG, uint8_t cB, uint8_t cA);
+	void pony_bitmap_fillRect(uint32_t * s, size_t width, size_t height, int64_t rX, int64_t rY, size_t rW, size_t rH, uint8_t cR, uint8_t cG, uint8_t cB, uint8_t cA);
 	void pony_bitmap_blit(	uint32_t * d_ptr, size_t d_width, size_t d_height, 
 							uint32_t * s_ptr, size_t s_width, size_t s_height,
-							size_t d_x, size_t d_y,
-							size_t s_x, size_t s_y, size_t r_width, size_t r_height
+							int64_t d_x, int64_t d_y,
+							int64_t s_x, int64_t s_y, size_t r_width, size_t r_height
 							);
 	void * pony_bitmap_row_pointers(char * ptr, size_t width, size_t height);
 	void pony_bitmap_row_pointers_free(char * ptr);
@@ -27,15 +27,15 @@ typedef struct RGBA
 	unsigned char a;
 } RGBA;
 
-inline size_t max(size_t a, size_t b) {
+inline int64_t max(int64_t a, int64_t b) {
   return a > b ? a : b;
 }
 
-inline size_t min(size_t a, size_t b) {
+inline int64_t min(int64_t a, int64_t b) {
   return a < b ? a : b;
 }
 
-void pony_bitmap_fillRect(uint32_t * s, size_t width, size_t height, size_t rX, size_t rY, size_t rW, size_t rH, uint8_t cR, uint8_t cG, uint8_t cB, uint8_t cA) {
+void pony_bitmap_fillRect(uint32_t * s, size_t width, size_t height, int64_t rX, int64_t rY, size_t rW, size_t rH, uint8_t cR, uint8_t cG, uint8_t cB, uint8_t cA) {
 #if defined(NATIVE_LITTLE_ENDIAN)
 	uint32_t color = (cR << 24) | (cG << 16) | (cB << 8) | cA;
 #else
@@ -63,8 +63,8 @@ void pony_bitmap_fillRect(uint32_t * s, size_t width, size_t height, size_t rX, 
 
 void pony_bitmap_blit(	uint32_t * d_ptr, size_t d_width, size_t d_height, 
 						uint32_t * s_ptr, size_t s_width, size_t s_height,
-						size_t d_x, size_t d_y,
-						size_t s_x, size_t s_y, size_t r_width, size_t r_height
+						int64_t d_x, int64_t d_y,
+						int64_t s_x, int64_t s_y, size_t r_width, size_t r_height
 						) {
 	UNUSED(s_height);
 	
@@ -72,18 +72,18 @@ void pony_bitmap_blit(	uint32_t * d_ptr, size_t d_width, size_t d_height,
 	uint32_t * e;
 	uint32_t * s;
 
-	size_t minY = 0;
-	size_t maxY = min(d_height - d_y, r_height);
-	size_t y = minY;
+	int64_t minY = 0;
+	int64_t maxY = min(d_height - d_y, r_height);
+	int64_t y = minY;
 	
-	size_t minX = 0;
-	size_t maxX = min(d_width - d_x, r_width);
+	int64_t minX = 0;
+	int64_t maxX = min(d_width - d_x, r_width);
 	
 	// If we are completely outside of the destination bail early
-	if (d_x > d_width || (d_x + r_width) < 0) {
+	if (d_x > (int64_t)d_width || (d_x + (int64_t)r_width) < 0) {
 		return;
 	}
-	if (d_y > d_height || (d_y + r_height) < 0) {
+	if (d_y > (int64_t)d_height || (d_y + (int64_t)r_height) < 0) {
 		return;
 	}
 	
@@ -100,7 +100,7 @@ void pony_bitmap_blit(	uint32_t * d_ptr, size_t d_width, size_t d_height,
 
 void * pony_bitmap_row_pointers(char * ptr, size_t width, size_t height) {
     char ** row_pointers = (char **)malloc(sizeof(char *) * height);
-    for (size_t y = 0; y < height; y++)
+    for (int64_t y = 0; y < (int64_t)height; y++)
 	{
 		row_pointers[y] = ptr + (y * width * 4);
     }
