@@ -14,15 +14,12 @@ all: shim pony run
 
 shim-native:
 	cd build
-	$(native_cc) -fPIC -Wall -Wextra -O3 -g -MM src/*.cc > $(build_dir)/bitmap.d
 	$(native_cc) -arch x86_64 -arch i386 -fPIC -Wall -Wextra -O3 -g -c -o $(build_dir)/bitmap.o src/*.cc
-	$(native_cc) -arch x86_64 -arch i386 -c -o $(lib_dir)/libponybitmap-osx.a $(build_dir)/bitmap.o
-
+	lipo -create -output $(lib_dir)/libponybitmap-osx.a $(build_dir)/bitmap.o
+	
 shim-ios:
-	$(iphonesdk_clang) -fPIC -Wall -Wextra -O3 -g -MM src/*.cc > $(build_dir)/bitmap.d
 	$(iphonesdk_clang) -arch armv7 -arch armv7s -arch arm64 -mios-version-min=10.0 -isysroot $(iphonesdk_isysroot) -fPIC -Wall -Wextra -O3 -g -c -o $(build_dir)/bitmap.o src/*.cc
-	$(iphonesdk_clang) -arch armv7 -arch armv7s -arch arm64 -mios-version-min=10.0 -isysroot $(iphonesdk_isysroot) -c -o $(lib_dir)/libponybitmap-ios.a $(build_dir)/bitmap.o
-
+	lipo -create -output $(lib_dir)/libponybitmap-ios.a $(build_dir)/bitmap.o
 
 shim: check-folders shim-ios shim-native
 
