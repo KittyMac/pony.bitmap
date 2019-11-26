@@ -2,6 +2,7 @@ use "fileExt"
 use "ponytest"
 use "files"
 use "flow"
+use "png"
 
 actor Main is TestList
 	new create(env: Env) => PonyTest(env, this)
@@ -16,9 +17,38 @@ class iso _TestBitmap is UnitTest
 
 	fun apply(h: TestHelper) =>
 		try
-			let bitmap = Bitmap(100,100)
-			bitmap.clear(RGBA.red())
-			FileExt.cpointerToFile(bitmap, "/tmp/bitmap.raw")?
+			let red = Bitmap(100,100)
+			red.clear(RGBA.red())
+			
+			let blue = Bitmap(5000,5000)
+			blue.clear(RGBA.blue())
+			
+			let yellow = Bitmap(5000,5000)
+			yellow.clear(RGBA.yellow())
+			
+			let green = Bitmap(5000,5000)
+			green.clear(RGBA.green())
+			
+			let black = Bitmap(5000,5000)
+			black.clear(RGBA.black())
+			
+			red.blit(-100, -100, blue)
+			red.blit(200, 200, blue)
+			
+			red.blit(-15, -15, blue)
+			
+			red.blit(100-15, 100-15, black)
+			
+			red.blit(-15, 100-15, green)
+			red.blit(100-15, -15, yellow)
+			
+			PNGWriter.write("/tmp/bitmap.png", red)?
+			
+			PNGWriter.write("/tmp/bitmap_blue.png", blue)?
+			PNGWriter.write("/tmp/bitmap_green.png", green)?
+			PNGWriter.write("/tmp/bitmap_yellow.png", yellow)?
+			PNGWriter.write("/tmp/bitmap_black.png", black)?
+			//FileExt.cpointerToFile(red, "/tmp/bitmap.raw")?
 		end
 	
 

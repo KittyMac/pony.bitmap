@@ -68,17 +68,6 @@ void pony_bitmap_blit(	uint32_t * d_ptr, size_t d_width, size_t d_height,
 						) {
 	UNUSED(s_height);
 	
-	uint32_t * p;
-	uint32_t * e;
-	uint32_t * s;
-
-	int64_t minY = 0;
-	int64_t maxY = min(d_height - d_y, r_height);
-	int64_t y = minY;
-	
-	int64_t minX = 0;
-	int64_t maxX = min(d_width - d_x, r_width);
-	
 	// If we are completely outside of the destination bail early
 	if (d_x > (int64_t)d_width || (d_x + (int64_t)r_width) < 0) {
 		return;
@@ -87,10 +76,32 @@ void pony_bitmap_blit(	uint32_t * d_ptr, size_t d_width, size_t d_height,
 		return;
 	}
 	
-	while ( y < maxY ) {		
-		p = d_ptr + ((y + d_y) * d_width) + (d_x + minX);
-		e = d_ptr + ((y + d_y) * d_width) + (d_x + maxX);
-		s = s_ptr + ((y + s_y) * s_width) + (s_x + minX);
+	if (d_x < 0) {
+		s_x += abs(d_x);
+		r_width -= s_x;
+		d_x = 0;
+	}
+	if (d_y < 0) {
+		s_y += abs(d_y);
+		r_height -= s_y;
+		d_y = 0;
+	}
+	if (d_x + r_width > d_width) {
+		r_width = d_width - d_x;
+	}
+	if (d_y + r_height > d_height) {
+		r_height = d_height - d_y;
+	}
+		
+	uint32_t * p;
+	uint32_t * e;
+	uint32_t * s;
+	size_t y = 0;
+	while ( y < r_height ) {		
+		p = d_ptr + ((y + d_y) * d_width) + (d_x);
+		s = s_ptr + ((y + s_y) * s_width) + (s_x);
+		
+		e = p + r_width;
 		while (p < e) {
 			*(p++) = *(s++);
 		}

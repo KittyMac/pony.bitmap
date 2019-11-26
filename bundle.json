@@ -7,6 +7,14 @@
 	  {
         "type": "local",
         "local-path": "../pony.flow"
+      },
+	  {
+        "type": "local",
+        "local-path": "../pony.png"
+      },
+	  {
+        "type": "local",
+        "local-path": "../pony.bitmap"
       }
   ]
 }
