@@ -42,13 +42,17 @@ class iso _TestBitmap is UnitTest
 			red.blit(-15, 100-15, green)
 			red.blit(100-15, -15, yellow)
 			
+			
+			red.blitPart(-30, -30, green, 100, 100, 35, 35)
+			
 			PNGWriter.write("/tmp/bitmap.png", red)?
 			
+			/*
 			PNGWriter.write("/tmp/bitmap_blue.png", blue)?
 			PNGWriter.write("/tmp/bitmap_green.png", green)?
 			PNGWriter.write("/tmp/bitmap_yellow.png", yellow)?
 			PNGWriter.write("/tmp/bitmap_black.png", black)?
-			//FileExt.cpointerToFile(red, "/tmp/bitmap.raw")?
+			*/
 		end
 	
 

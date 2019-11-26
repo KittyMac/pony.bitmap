@@ -78,12 +78,12 @@ void pony_bitmap_blit(	uint32_t * d_ptr, size_t d_width, size_t d_height,
 	
 	if (d_x < 0) {
 		s_x += abs(d_x);
-		r_width -= s_x;
+		r_width -= abs(d_x);
 		d_x = 0;
 	}
 	if (d_y < 0) {
 		s_y += abs(d_y);
-		r_height -= s_y;
+		r_height -= abs(d_y);
 		d_y = 0;
 	}
 	if (d_x + r_width > d_width) {
