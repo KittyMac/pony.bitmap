@@ -12,6 +12,11 @@ extern "C"
 							int64_t d_x, int64_t d_y,
 							int64_t s_x, int64_t s_y, size_t r_width, size_t r_height
 							);
+	void pony_bitmap_blit_over(	uint8_t * d_ptr, size_t d_width, size_t d_height, 
+								uint8_t * s_ptr, size_t s_width, size_t s_height,
+								int64_t d_x, int64_t d_y,
+								int64_t s_x, int64_t s_y, size_t r_width, size_t r_height
+								);
 	void * pony_bitmap_row_pointers(char * ptr, size_t width, size_t height);
 	void pony_bitmap_row_pointers_free(char * ptr);
 }
@@ -104,6 +109,62 @@ void pony_bitmap_blit(	uint32_t * d_ptr, size_t d_width, size_t d_height,
 		e = p + r_width;
 		while (p < e) {
 			*(p++) = *(s++);
+		}
+		y++;
+	}
+}
+
+void pony_bitmap_blit_over(	uint8_t * d_ptr, size_t d_width, size_t d_height, 
+							uint8_t * s_ptr, size_t s_width, size_t s_height,
+							int64_t d_x, int64_t d_y,
+							int64_t s_x, int64_t s_y, size_t r_width, size_t r_height
+							) {
+	UNUSED(s_height);
+	
+	// If we are completely outside of the destination bail early
+	if (d_x > (int64_t)d_width || (d_x + (int64_t)r_width) < 0) {
+		return;
+	}
+	if (d_y > (int64_t)d_height || (d_y + (int64_t)r_height) < 0) {
+		return;
+	}
+	
+	if (d_x < 0) {
+		s_x += abs(d_x);
+		r_width -= abs(d_x);
+		d_x = 0;
+	}
+	if (d_y < 0) {
+		s_y += abs(d_y);
+		r_height -= abs(d_y);
+		d_y = 0;
+	}
+	if (d_x + r_width > d_width) {
+		r_width = d_width - d_x;
+	}
+	if (d_y + r_height > d_height) {
+		r_height = d_height - d_y;
+	}
+		
+	uint8_t * p;
+	uint8_t * e;
+	uint8_t * s;
+	uint8_t inv_alpha;
+	size_t y = 0;
+	while ( y < r_height ) {		
+		p = d_ptr + (((y + d_y) * d_width * 4) + (d_x * 4));
+		s = s_ptr + (((y + s_y) * s_width * 4) + (s_x * 4));
+		
+		e = p + r_width * 4;
+		while (p < e) {
+			inv_alpha = (255 - s[3]);
+			p[0] = ((p[0] * inv_alpha) + (s[0] * s[3])) >> 8;
+			p[1] = ((p[1] * inv_alpha) + (s[1] * s[3])) >> 8;
+			p[2] = ((p[2] * inv_alpha) + (s[2] * s[3])) >> 8;
+			p[3] = 255;
+
+			p += 4;
+			s += 4;
 		}
 		y++;
 	}

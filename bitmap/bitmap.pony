@@ -11,6 +11,10 @@ use @pony_bitmap_blit[None](	d_ptr:Pointer[U8] tag, d_width:USize, d_height:USiz
 								s_ptr:Pointer[U8] tag, s_width:USize, s_height:USize,
 								d_x:I64, d_y:I64,
 								s_x:I64, s_y:I64, r_width:USize, r_height:USize)
+use @pony_bitmap_blit_over[None](	d_ptr:Pointer[U8] tag, d_width:USize, d_height:USize, 
+									s_ptr:Pointer[U8] tag, s_width:USize, s_height:USize,
+									d_x:I64, d_y:I64,
+									s_x:I64, s_y:I64, r_width:USize, r_height:USize)
 
 struct RGBA
 	var r:U8 = 0
@@ -123,6 +127,23 @@ class val Bitmap
 							s_x, s_y, s_width, s_height)
 	
 	
+	fun ref blitOver(x:I64, y:I64, o:Bitmap box) =>
+		"""
+		blit the entire destination bitmap into the source bitmap at x,y. Performs alpha blending.
+		"""
+		@pony_bitmap_blit_over(	bytes.cpointer(0), width, height, 
+								o.bytes.cpointer(0), o.width, o.height,
+								x, y,
+								0, 0, o.width, o.height)
+	
+	fun ref blitPartOver(d_x:I64, d_y:I64, o:Bitmap box, s_x:I64, s_y:I64, s_width:USize, s_height:USize) =>
+		"""
+		blit the a subrect of the destination bitmap into the source bitmap at x,y. Performs alpha blending.
+		"""
+		@pony_bitmap_blit_over(	bytes.cpointer(0), width, height, 
+								o.bytes.cpointer(0), o.width, o.height,
+								d_x, d_y,
+								s_x, s_y, s_width, s_height)
 	
 	
 	fun rowPointers():Pointer[None] =>
