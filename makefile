@@ -31,6 +31,7 @@ check-folders:
 
 clean:
 	rm ./build/*
+	rm ./lib/*
 
 run:
 	./build/bitmap
