@@ -27,11 +27,15 @@ pony: check-folders
 	stable env /Volumes/Development/Development/pony/ponyc/build/release/ponyc -p $(lib_dir) -o ./build/ ./bitmap
 
 check-folders:
-	-mkdir ./build
+	@mkdir -p ./build
 
 clean:
 	rm ./build/*
 	rm ./lib/*
 
 run:
+	./build/bitmap
+
+test: check-folders
+	stable env /Volumes/Development/Development/pony/ponyc/build/release/ponyc -V=0 -p $(lib_dir) -o ./build/ ./bitmap
 	./build/bitmap
