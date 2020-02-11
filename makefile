@@ -24,7 +24,7 @@ shim-ios:
 shim: check-folders shim-ios shim-native
 
 pony: check-folders
-	stable env /Volumes/Development/Development/pony/ponyc/build/release/ponyc -p $(lib_dir) -o ./build/ ./bitmap
+	corral run -- ponyc -p $(lib_dir) -o ./build/ ./bitmap
 
 check-folders:
 	@mkdir -p ./build
@@ -37,5 +37,37 @@ run:
 	./build/bitmap
 
 test: check-folders
-	stable env /Volumes/Development/Development/pony/ponyc/build/release/ponyc -V=0 -p $(lib_dir) -o ./build/ ./bitmap
+	corral run -- ponyc -V=0 -p $(lib_dir) -o ./build/ ./bitmap
 	./build/bitmap
+
+
+
+
+
+corral-fetch:
+	@corral clean -q
+	@corral fetch -q
+
+corral-local:
+	-@rm corral.json
+	-@rm lock.json
+	@corral init -q
+	@corral add /Volumes/Development/Development/pony/pony.fileExt -q
+	@corral add /Volumes/Development/Development/pony/pony.flow -q
+	@corral add /Volumes/Development/Development/pony/pony.png -q
+	@corral add /Volumes/Development/Development/pony/pony.bitmap -q
+
+corral-git:
+	-@rm corral.json
+	-@rm lock.json
+	@corral init -q
+	@corral add github.com/KittyMac/pony.fileExt.git -q
+	@corral add github.com/KittyMac/pony.flow.git -q
+	@corral add github.com/KittyMac/pony.png.git -q
+	@corral add github.com/KittyMac/pony.bitmap.git -q
+
+ci: corral-git corral-fetch all
+	
+dev: corral-local corral-fetch all
+
+

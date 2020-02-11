@@ -2,7 +2,6 @@ build/*
 TAGS
 tags
 .deps/*
-shim/libjpeg_source/ios
-shim/libjpeg_source/osx
-shim/libjpeg_source/src
 *.tar.gz
+_corral
+_repos
